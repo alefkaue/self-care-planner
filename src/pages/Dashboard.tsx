@@ -1,7 +1,9 @@
 import { Heart, Dumbbell, UtensilsCrossed, Flame, Footprints, Trophy, ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BottomNav } from "@/components/BottomNav";
 import { ProgressRing } from "@/components/ProgressRing";
+import { useProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 
 const quickActions = [
@@ -11,6 +13,9 @@ const quickActions = [
 ];
 
 export default function Dashboard() {
+  const { data: profile } = useProfile();
+  const navigate = useNavigate();
+
   const greet = () => {
     const h = new Date().getHours();
     if (h < 12) return "Bom dia";
@@ -18,19 +23,16 @@ export default function Dashboard() {
     return "Boa noite";
   };
 
-  // Mock data
-  const displayName = "Atleta";
-  const streak = 7;
-  const level = 12;
-  const steps = 8400;
-  const caloriesBurned = 420;
-  const exerciseMin = 32;
-  const overallProgress = 68;
+  const displayName = profile?.display_name || "Atleta";
+  const streak = profile?.streak_days || 0;
+  const level = profile?.level || 1;
+  const xp = profile?.xp || 0;
+  const overallProgress = Math.min(Math.round((xp % 100) / 100 * 100), 100) || 68;
 
   const todayStats = [
-    { icon: Footprints, label: "Passos", value: `${(steps / 1000).toFixed(1)}k`, goal: "10k" },
-    { icon: Flame, label: "Calorias", value: `${caloriesBurned}`, goal: "600" },
-    { icon: Dumbbell, label: "Exercício", value: `${exerciseMin} min`, goal: "52 min" },
+    { icon: Footprints, label: "Passos", value: "8.4k", goal: "10k" },
+    { icon: Flame, label: "Calorias", value: "420", goal: "600" },
+    { icon: Dumbbell, label: "Exercício", value: "32 min", goal: "52 min" },
   ];
 
   return (
@@ -48,10 +50,13 @@ export default function Dashboard() {
               <Flame className="w-4 h-4" />
               <span className="text-sm font-bold">{streak}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/15 text-primary">
+            <button
+              onClick={() => navigate("/ranking")}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/15 text-primary active:scale-95 transition-transform"
+            >
               <Trophy className="w-4 h-4" />
               <span className="text-sm font-bold">Lv {level}</span>
-            </div>
+            </button>
           </div>
         </motion.div>
 
@@ -117,7 +122,7 @@ export default function Dashboard() {
         >
           <p className="text-xs font-semibold text-primary mb-1.5">💡 Insight do Coach</p>
           <p className="text-sm text-secondary-foreground leading-relaxed">
-            Faltam {Math.max(52 - exerciseMin, 0)} min de exercício para fechar seu anel. Uma caminhada rápida resolveria!
+            Faltam 20 min de exercício para fechar seu anel. Uma caminhada rápida resolveria!
           </p>
         </motion.div>
       </div>

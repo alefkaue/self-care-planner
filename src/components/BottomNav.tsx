@@ -1,12 +1,12 @@
-import { Home, Heart, Dumbbell, UtensilsCrossed, User } from "lucide-react";
+import { Home, Heart, Dumbbell, UtensilsCrossed, User, MessageCircle } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { to: "/", icon: Home, label: "Início" },
   { to: "/saude", icon: Heart, label: "Saúde" },
+  { to: "/chat", icon: MessageCircle, label: "Coach IA" },
   { to: "/treinos", icon: Dumbbell, label: "Treinos" },
-  { to: "/nutricao", icon: UtensilsCrossed, label: "Nutrição" },
   { to: "/perfil", icon: User, label: "Perfil" },
 ];
 
@@ -30,8 +30,12 @@ export function BottomNav() {
           >
             {({ isActive }) => (
               <>
-                <div className={cn("p-1.5 rounded-xl transition-all", isActive && "bg-primary/15")}>
-                  <item.icon className="w-5 h-5" />
+                <div className={cn(
+                  "p-1.5 rounded-xl transition-all",
+                  isActive && "bg-primary/15",
+                  item.to === "/chat" && !isActive && "gradient-primary !p-2 rounded-full"
+                )}>
+                  <item.icon className={cn("w-5 h-5", item.to === "/chat" && !isActive && "text-primary-foreground")} />
                 </div>
                 <span className="text-[10px] font-medium">{item.label}</span>
               </>
